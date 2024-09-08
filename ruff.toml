@@ -356,7 +356,6 @@ select = [
   "RUF019",
   "RUF020",
   "RUF100",
-  "S101",
   "S102",
   "S103",
   "S104",
@@ -532,14 +531,6 @@ select = [
 [lint.per-file-ignores]
 "**/scripts/*" = [
   "INP001",
-  "T201",
-]
-"tests/*" = [
-  "PLC1901",
-  "PLR2004",
-  "PLR6301",
-  "S",
-  "TID252",
   "T201",
 ]
 "**/tests/**/*" = [

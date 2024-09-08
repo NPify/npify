@@ -37,8 +37,8 @@ extra-dependencies = [
 [tool.hatch.envs.lint.scripts]
 run = [
   "flake8 src tests",
-  "ruff check src tests",
-  "mypy src tests"
+  "ruff check src tests --fix",
+  "mypy src tests --check-untyped-defs"
 ]
 
 

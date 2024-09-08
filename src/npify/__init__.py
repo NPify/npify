@@ -2,7 +2,11 @@ from dataclasses import dataclass
 
 
 class ListLike(list):
+    def __init__(self, *args):
+        self.extend(args)
+
     def flatten(self):
+        # TODO: flatten recursively
         cls = self.__class__
         result = cls()
 
@@ -22,13 +26,25 @@ class ListLike(list):
 
 
 class Or(ListLike):
-    def __init__(*args):
-        pass
+    pass
 
 
 class And(ListLike):
-    def __init__(*args):
-        pass
+    pass
+
+
+class AtMostLiterals(ListLike):
+    pass
+
+
+@dataclass
+class AtMost:
+    literals: AtMostLiterals
+    bound: int
+
+
+def at_most_one(literals):
+    return AtMost(literals, 1)
 
 
 def bool_var(cls):
@@ -84,11 +100,13 @@ class CNFPrinter:
         self.file = file
         self.vars = VarDict()
 
-    def or_iter(self, iterator):
-        print(" ".join(str(x.to_int(self.vars)) for x in iterator), file=self.file)
+    def append(self, clause):
+        clause = to_cnf(clause)
+        print(" ".join(str(x.to_int(self.vars)) for x in clause), file=self.file)
 
-    def or_(self, *args):
-        print(" ".join(str(x.to_int(self.vars)) for x in args), file=self.file)
+    def extend(self, clauses):
+        for clause in clauses:
+            self.append(clause)
 
 
 def print_cnf(formula, file):
@@ -97,32 +115,73 @@ def print_cnf(formula, file):
     check_is_cnf(formula)
 
     for clause in formula:
-        printer.or_iter(clause)
+        printer.append(clause)
 
 
 class NotCNFError(ValueError):
     pass
 
 
+class NotAClauseError(ValueError):
+    pass
+
+
 def check_is_cnf(formula):
     if not isinstance(formula, And):
-        msg = "Root node is not a conjunction."
+        msg = (f"Expected conjunction (And) at root node, but found"
+               f"'{type(formula).__name__}'.")
         raise NotCNFError(msg)
 
     for clause in formula:
         if not isinstance(clause, Or):
-            msg = "Child node is not a disjunction."
+            msg = ("Expected a disjunction (Or) at child node, but found."
+                   f"'{type(clause).__name__}'.")
             raise NotCNFError(msg)
 
-        for literal in clause:
-            if isinstance(literal, BooleanLiteral):
-                continue
-            if isinstance(literal, BooleanVariable):
-                continue
+        try:
+            check_is_clause(clause)
+        except NotAClauseError as e:
+            raise NotCNFError from e
 
-            msg = (f"Expected a Boolean variable or a literal inside a clause, "
-                   f"but found '{literal}'.")
-            raise NotCNFError(msg)
+
+def check_is_clause(clause):
+    for literal in clause:
+        if isinstance(literal, BooleanLiteral):
+            continue
+        if isinstance(literal, BooleanVariable):
+            continue
+
+        msg = (f"Expected a Boolean variable or a literal inside a clause, "
+               f"but found '{type(literal).__name__}'.")
+        raise NotCNFError(msg)
+
+
+def to_cnf(formula):
+    if isinstance(formula, AtMost):
+        if formula.bound != 1:
+            raise NotImplementedError
+
+        for literal in formula.literals:
+            if (not isinstance(literal, BooleanVariable) and
+                    not isinstance(literal, BooleanLiteral)):
+                raise NotImplementedError
+
+        result = And()
+        for var1 in formula.literals:
+            for var2 in formula.literals:
+                if var1 != var2:
+                    result.append(Or(~var1, ~var2))
+
+        return result
+    if isinstance(formula, Or):
+        try:
+            check_is_clause(formula)
+        except NotAClauseError as e:
+            raise NotImplementedError from e
+
+        return formula
+
+    raise NotImplementedError
 
 
 class Visitor:
