@@ -19,6 +19,9 @@ class BooleanVariable():
     def to_int(self, varDict):
         return varDict[self]
 
+class Or():
+    def __init__(*args, iter):
+        pass
 
 
 @dataclass(slots=True)
@@ -142,7 +145,12 @@ def generate(ast: Builder, file: StringIO):
     """ Evaluate the given abstract syntax tree and write thre result to the given file. """
     ...
 
-def php_builder():
+def php_builder(n):
+    npigeons = n
+    nholes = n
+    pigeons = list(range(npigeons))
+    holes = list(range(nholes))
+
     builder = Builder()
 
     one_hole_per_pigeon = builder.forall(p=pigeons).or_iter(var("Match(p,h)"), h=holes)
@@ -160,14 +168,14 @@ def php_builder():
 def main():
     print('nice', timeit('php_nice(40)', number=10, globals=globals()))
     print('raw', timeit('php_raw(40)', number=10, globals=globals()))
-    print('builder', timeit('php_builder(40)', number=10, globals=globals()))
+    # print('builder', timeit('php_builder(40)', number=10, globals=globals()))
 
     a = php_nice(40)
     b = php_raw(40)
-    c = php_builder(40)
+    # c = php_builder(40)
 
     assert a == b
-    assert b == c
+    # assert b == c
 
 
 

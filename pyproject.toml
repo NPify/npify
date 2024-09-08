@@ -1,14 +1,23 @@
-[tool.poetry]
+[project]
 name = "npify"
 version = "0.1.0"
 description = ""
-authors = ["Stephan Gocht"]
+authors = [
+  {name = "Stephan Gocht", email = "stephan@drgocht.com"},
+]
+maintainers = [
+  {name = "Stephan Gocht", email = "stephan@drgocht.com"},
+]
+
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 
 
+
+[tool.hatch]
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
