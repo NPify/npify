@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"folder_exclude_patterns": [".ruff_cache", ".pytest_cache", ".mypy_cache"]
+		}
+	],
+	"settings": {
+		"SublimeLinter.linters.flake8.executable": "${project_path}/.venvs/lint/bin/flake8",
+		"SublimeLinter.linters.mypy.executable": "${project_path}/.venvs/lint/bin/mypy",
+		"SublimeLinter.linters.ruff.executable": "${project_path}/.venvs/lint/bin/ruff",
+		"SublimeLinter.linters.ruff.args": [
+			"--config", "${project_path}/pyproject.toml"
+		],
+	}
+}
