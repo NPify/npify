@@ -12,6 +12,14 @@ maintainers = [
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "License :: OSI Approved :: MIT License",
+]
+[project.urls]
+"Homepage" = "https://www.npify.com"
+"Bug Reports" = "https://github.com/NPify/npify/issues"
+"Source" = "https://github.com/NPify/npify"
 
 [tool.hatch.version]
 path = "src/npify/__about__.py"
